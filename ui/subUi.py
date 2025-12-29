@@ -46,12 +46,6 @@ class ProcessingDialog(QDialog):
         self.setModal(True)
         self.setFixedSize(185, 60)
 
-        spinner = QLabel(alignment=Qt.AlignCenter)
-        movie = QMovie("media/spinner.gif")
-        movie.setScaledSize(QSize(50, 28))
-        spinner.setMovie(movie)
-        movie.start()
-
         text = QLabel("Processing…")
         text.setAlignment(Qt.AlignVCenter)
 
@@ -117,4 +111,5 @@ class NoImgWarning(QDialog):
         label = QLabel("Invalid Image!")
         layout.addWidget(label)
         label.setAlignment(Qt.AlignCenter)
+
         self.setLayout(layout)
