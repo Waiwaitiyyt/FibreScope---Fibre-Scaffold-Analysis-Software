@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1080, 642)
+        MainWindow.resize(1080, 640)
         MainWindow.setMinimumSize(QSize(1080, 640))
         MainWindow.setMaximumSize(QSize(1080, 680))
         self.actionFile = QAction(MainWindow)
@@ -50,8 +50,10 @@ class Ui_MainWindow(object):
         self.actionRun_Analysis.setObjectName(u"actionRun_Analysis")
         self.actionAbout = QAction(MainWindow)
         self.actionAbout.setObjectName(u"actionAbout")
-        self.actionChaneg_Scale_Factor = QAction(MainWindow)
-        self.actionChaneg_Scale_Factor.setObjectName(u"actionChaneg_Scale_Factor")
+        self.actionChange_Scale_Factor = QAction(MainWindow)
+        self.actionChange_Scale_Factor.setObjectName(u"actionChange_Scale_Factor")
+        self.actionChange_JER = QAction(MainWindow)
+        self.actionChange_JER.setObjectName(u"actionChange_JER")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.centralwidget.setMinimumSize(QSize(1080, 620))
@@ -148,7 +150,8 @@ class Ui_MainWindow(object):
         self.menuRun.addAction(self.actionRun_Analysis)
         self.menuSettings.addAction(self.actionChange_Fibre_Model)
         self.menuSettings.addAction(self.actionChange_Pore_Model)
-        self.menuSettings.addAction(self.actionChaneg_Scale_Factor)
+        self.menuSettings.addAction(self.actionChange_Scale_Factor)
+        self.menuSettings.addAction(self.actionChange_JER)
         self.menuAbout.addAction(self.actionAbout)
         self.menuOptions.addAction(self.actionPore_Measure)
         self.menuOptions.addAction(self.actionFibre_Measure)
@@ -194,7 +197,8 @@ class Ui_MainWindow(object):
         self.actionRun_Analysis.setShortcut(QCoreApplication.translate("MainWindow", u"F5", None))
 #endif // QT_CONFIG(shortcut)
         self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
-        self.actionChaneg_Scale_Factor.setText(QCoreApplication.translate("MainWindow", u"Chaneg Scale Factor", None))
+        self.actionChange_Scale_Factor.setText(QCoreApplication.translate("MainWindow", u"Change Scale Factor", None))
+        self.actionChange_JER.setText(QCoreApplication.translate("MainWindow", u"Change JER", None))
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Average", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
@@ -212,7 +216,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(7)
         ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"95% CI", None));
         ___qtablewidgetitem8 = self.tableWidget.horizontalHeaderItem(8)
-        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Kernel Size", None));
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"JER", None));
         ___qtablewidgetitem9 = self.tableWidget.verticalHeaderItem(0)
         ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
 

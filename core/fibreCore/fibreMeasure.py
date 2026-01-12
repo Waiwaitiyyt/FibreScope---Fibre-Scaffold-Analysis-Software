@@ -61,7 +61,14 @@ def _distanceMeasure(binary_mask: np.ndarray,
     skel_bool = skeletonize(large_mask > 0)
     skelImg = (skel_bool.astype(np.uint8) * 255)
 
-    # --- Neighbor count (junction & endpoint removal) ---
+    with open("data.json", "r") as jsonFile:
+        data = json.load(jsonFile)
+
+    scaleFactor = data["scaleFactor"]
+    jer = data["JER"]
+
+
+    # --- Neighbor count ---
     padded = np.pad(skel_bool.astype(np.uint8), 1)
     neighbor_counts = np.zeros_like(skel_bool, dtype=np.int32)
     offsets = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
@@ -69,8 +76,19 @@ def _distanceMeasure(binary_mask: np.ndarray,
         neighbor_counts += padded[1+dy:1+dy+skel_bool.shape[0],
                                   1+dx:1+dx+skel_bool.shape[1]]
 
-    # Keep only simple chain points (no junctions, no endpoints)
-    keep_mask = skel_bool & (neighbor_counts == 2)
+    junction_mask = skel_bool & (neighbor_counts >= 3)
+
+    # --- Junction exclusion zone ---
+    if junction_mask.any():
+        junc_map = np.zeros_like(skel_bool, dtype=np.uint8)
+        junc_map[junction_mask] = 1
+        dist_to_junc = distance_transform_edt(1 - junc_map)
+        junction_exclusion_radius = jer  # tune
+        near_junction = dist_to_junc <= junction_exclusion_radius
+    else:
+        near_junction = np.zeros_like(skel_bool, dtype=bool)
+
+    keep_mask = skel_bool & (neighbor_counts == 2) & (~near_junction)
 
     coords = np.argwhere(keep_mask)
     if coords.size == 0:
@@ -105,10 +123,6 @@ def _distanceMeasure(binary_mask: np.ndarray,
         widths = widths[idx]
         coords = coords[idx]
 
-    with open("data.json", "r") as jsonFile:
-        data = json.load(jsonFile)
-
-    scaleFactor = data["scaleFactor"]
     widths *= scaleFactor
     return widths.tolist(), skelImg, coords.tolist()
 

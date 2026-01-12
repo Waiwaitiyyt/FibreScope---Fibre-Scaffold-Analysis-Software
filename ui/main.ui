@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>1080</width>
-    <height>642</height>
+    <height>640</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -155,7 +155,7 @@
     </column>
     <column>
      <property name="text">
-      <string>Kernel Size</string>
+      <string>JER</string>
      </property>
     </column>
     <item row="0" column="0">
@@ -234,7 +234,8 @@
     </property>
     <addaction name="actionChange_Fibre_Model"/>
     <addaction name="actionChange_Pore_Model"/>
-    <addaction name="actionChaneg_Scale_Factor"/>
+    <addaction name="actionChange_Scale_Factor"/>
+    <addaction name="actionChange_JER"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
@@ -339,9 +340,14 @@
     <string>About</string>
    </property>
   </action>
-  <action name="actionChaneg_Scale_Factor">
+  <action name="actionChange_Scale_Factor">
    <property name="text">
-    <string>Chaneg Scale Factor</string>
+    <string>Change Scale Factor</string>
+   </property>
+  </action>
+  <action name="actionChange_JER">
+   <property name="text">
+    <string>Change JER</string>
    </property>
   </action>
  </widget>

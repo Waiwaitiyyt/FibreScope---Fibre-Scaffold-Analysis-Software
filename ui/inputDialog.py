@@ -58,3 +58,4 @@ class RejectValue(QDialog):
         label = QLabel("Invalid Input!")
         layout.addWidget(label)
         self.setLayout(layout)
+

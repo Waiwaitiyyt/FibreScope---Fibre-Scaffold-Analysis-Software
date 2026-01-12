@@ -35,7 +35,7 @@ class AboutDialog(QDialog):
         # self.graphicsView.fitInView(self.pixmap_item.boundingRect(), Qt.KeepAspectRatio)
 
         self.imgLabel = QLabel(Dialog)
-        imgPixmap = QPixmap("media/title.png")
+        imgPixmap = QPixmap("media/CoraMetixLogo.png")
         self.imgLabel.setPixmap(imgPixmap)
         self.imgLabel.setAlignment(Qt.AlignCenter)
         self.imgLabel.setGeometry(QRect(67, 20, 267, 50))
@@ -58,6 +58,9 @@ class AboutDialog(QDialog):
         self.label_3.setGeometry(QRect(120, 150, 161, 41))
         self.label_3.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.label_4 = QLabel(Dialog)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setGeometry(QRect(110, 180, 191, 31))
+        self.label_4.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         self.retranslateUi(Dialog) 
         QMetaObject.connectSlotsByName(Dialog) 
@@ -66,5 +69,6 @@ class AboutDialog(QDialog):
     def retranslateUi(self, Dialog): 
         Dialog.setWindowTitle(QCoreApplication.translate("About", u"About FibreScope", None)) 
         self.label.setText(QCoreApplication.translate("About", u"FibreScope", None))
-        self.label_2.setText(QCoreApplication.translate("About", u"Version:     0.1", None))
-        self.label_3.setText(QCoreApplication.translate("About", u"Author: Waiwaitiyyt", None))
+        self.label_2.setText(QCoreApplication.translate("About", u"Version:     0.2", None))
+        self.label_3.setText(QCoreApplication.translate("About", u"Author: Yangtian Yan", None))
+        self.label_4.setText(QCoreApplication.translate("About", u"Directed by: Alexander van Hoek", None))

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QMainWindow, QDialog, QWidget, QVBox
 from PySide6.QtCore import Qt, QSize, QThread, Signal
 from PySide6.QtGui import QIcon, QPixmap, QMovie
 from ui.mainWindow import Ui_MainWindow   
-from ui.subUi import FactorDialog, AcceptValue, RejectValue, NoModelWarning, NoImgWarning, ProcessingDialog
+from ui.subUi import FactorDialog, AcceptValue, RejectValue, NoModelWarning, NoImgWarning, ProcessingDialog, JERDialog
 from ui.about import AboutDialog
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
@@ -23,6 +23,7 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.setWindowTitle("FibreScope")
+        self.setWindowIcon(QIcon("icon.ico"))
         self._connectSignals()
         self._canvaSet()
 
@@ -53,19 +54,40 @@ class MainWindow(QMainWindow):
         self.ui.actionExit.triggered.connect(self._closeWindow)
         self.ui.actionChange_Fibre_Model.triggered.connect(io.changeFibreModel)
         self.ui.actionChange_Pore_Model.triggered.connect(io.changePoreModel)
-        self.ui.actionChaneg_Scale_Factor.triggered.connect(self._dialog)
+        self.ui.actionChange_Scale_Factor.triggered.connect(self._factorDialog)
+        self.ui.actionChange_JER.triggered.connect(self._jerDialog)
         self.ui.actionFibre_Measure.triggered.connect(self._toggleFibreMode)
         self.ui.actionPore_Measure.triggered.connect(self._togglePoreMode)
         self.ui.actionRun_Analysis.triggered.connect(self._startAnalysis)
         self.ui.actionSave_Result.triggered.connect(self._saveResult)
         self.ui.actionAbout.triggered.connect(self._about)
 
-    def _dialog(self):
+    def _factorDialog(self):
         dialog = FactorDialog(parent = self)
         result = dialog.exec()
         if result == QDialog.Accepted:
             inputData = dialog.getResult()
             newFactor = inputData["scaleFactor"]
+            try:
+                newFactor = float(newFactor)
+                accept = AcceptValue(parent = self)
+                accept.exec()
+                with open("data.json", "r") as jsonFile:
+                    data = json.load(jsonFile)
+                data["scaleFactor"] = newFactor
+                with open("data.json", "w") as jsonFile:
+                    json.dump(data, jsonFile, indent = 2)
+
+            except ValueError:
+                reject = RejectValue(parent = self)
+                reject.exec()
+
+    def _jerDialog(self):
+        dialog = JERDialog(parent = self)
+        result = dialog.exec()
+        if result == QDialog.Accepted:
+            inputData = dialog.getResult()
+            newFactor = inputData["JER"]
             try:
                 newFactor = float(newFactor)
                 accept = AcceptValue(parent = self)
@@ -181,7 +203,7 @@ class MainWindow(QMainWindow):
         iqr = QTableWidgetItem(str(round(data[modeSetting]["IQR"], 4)))
         ciLow, ciHigh = round(data[modeSetting]["95% CI"][0], 4), round(data[modeSetting]["95% CI"][1], 4)
         ci95 = QTableWidgetItem(f"{ciLow}, {ciHigh}")
-        kernel = QTableWidgetItem(str(10))
+        kernel = QTableWidgetItem(str(round(data["JER"])))
 
         average.setTextAlignment(Qt.AlignCenter)
         stdev.setTextAlignment(Qt.AlignCenter)
@@ -241,6 +263,13 @@ class AnalysisWorker(QThread):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    splash = QSplashScreen(
+        QPixmap("media/Splash2.png"),
+        Qt.WindowStaysOnTopHint
+    )
+    splash.show()
+    app.processEvents()
     window = MainWindow()
     window.show()
+    splash.finish(window)
     sys.exit(app.exec())
