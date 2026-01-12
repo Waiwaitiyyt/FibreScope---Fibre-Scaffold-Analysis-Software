@@ -3,7 +3,7 @@
   "fibreModel": "E:/CoraMetix/Fibre Diameter Measurement/Scaffold Analyser/scaffoldAnalysis/core/fibreCore/fibreModel.pth",
   "poreModel": "E:/CoraMetix/Fibre Diameter Measurement/Scaffold Analyser/scaffoldAnalysis/core/poreCore/poreModel.pth",
   "mode": "f",
-  "scaleFactor": 35.0,
+  "scaleFactor": 1.25,
   "JER": 40,
   "Fibre Param": {
     "Average": 812.9592909337722,
@@ -2379,4 +2379,5 @@
       2685.9375
     ]
   }
+
 }
