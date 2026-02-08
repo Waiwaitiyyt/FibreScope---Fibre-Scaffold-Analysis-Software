@@ -270,14 +270,14 @@ def result_analyse(diameter_arr: np.ndarray) -> None:
                  "Q1, Q3": (quantileLow, quantileHigh),
                  "IQR": quantileHigh - quantileLow,
                  "95% CI": (ciLow, ciHigh),
-                 "Raw": diameter_arr
+                 "Raw": diameter_arr.tolist()
                  }
 
     data["Fibre Param"] = fibreDict
     with open("data.json", "w") as jsonFile:
         json.dump(data, jsonFile, indent = 2)
 
-def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, smooth_sigma:float = 1.0) -> Tuple[np.ndarray, list]:
+def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, smooth_sigma:float = 1.0) -> Tuple[np.ndarray, list, np.ndarray]:
     '''
     Docstring for measure
     
@@ -299,24 +299,23 @@ def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 
     :param smooth_sigma: Smoothing factor
     :type smooth_sigma: float
 
-    :return: True diameter array and point pairs
-    :rtype: Tuple[ndarray[Any, Any], list[Any]]
+    :return: True diameter array, point pairs and ridge mask
+    :rtype: Tuple[ndarray[Any, Any], list[Any], ndarray[Any, Any]]
     '''
     edge_mask = ridge_enhancement(img_path)
     average_ridge_width = edge_width(edge_mask)
     pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, smooth_sigma)
     true_diameters = distances + average_ridge_width
-    # result_analyse(true_diameters)
-    return true_diameters, pairs
+    result_analyse(true_diameters)
+    return true_diameters, pairs, edge_mask
 
 
-# === 使用示例 ===
 if __name__ == "__main__":
     from PIL import Image
     import numpy as np
 
     img_path = r"E:\CoraMetix\Fibre Diameter Measurement\scaffoldAnalysis_Dev\images\06.16.04_10x_centre.jpg"
-    true_diameters, pairs = measure(img_path)
+    true_diameters, pairs, edge_mask= measure(img_path)
     print(np.mean(true_diameters))
 
     gray_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)

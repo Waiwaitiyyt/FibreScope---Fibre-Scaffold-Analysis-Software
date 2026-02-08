@@ -3,21 +3,20 @@ import cv2
 import seaborn as sns
 from matplotlib.figure import Figure
 
-def fibreResultVisualise(diameterList: list, measuredImg: np.ndarray, cleanImg: np.ndarray, originalImg: np.ndarray, fig: Figure | None = None) -> Figure:
-    areaArr = np.asarray(diameterList, dtype=np.float64)
+def fibre_result_visualise(diameter_arr: np.ndarray, img_path: str, pairs: list, edge_mask: np.ndarray, fig: Figure | None = None) -> Figure:
     if fig is None:
         fig = Figure(figsize=(12, 6))
 
     axes = fig.subplots(2, 3)
 
     ax_hist, ax_kde, ax_box = axes[0]
-    ax_originalImg, ax_mask, ax_refinedContours = axes[1]
+    ax_gray_img, ax_mask, ax_refinedContours = axes[1]
 
     # Titles
     ax_hist.set_title("Diameter Histogram")
     ax_kde.set_title("Kernel Density Estimation")
     ax_box.set_title("Boxplot")
-    ax_originalImg.set_title("Original Image")
+    ax_gray_img.set_title("Grayscale Image")
     ax_mask.set_title("Skeleton and Measurement Sites")
     ax_refinedContours.set_title("Binary Mask")
 
@@ -27,18 +26,25 @@ def fibreResultVisualise(diameterList: list, measuredImg: np.ndarray, cleanImg: 
     ax_box.set_xlabel("Fibre Diameter (µm)")
 
     # Image axes
-    for ax in (ax_originalImg, ax_mask, ax_refinedContours):
+    for ax in (ax_gray_img, ax_mask, ax_refinedContours):
         ax.axis("off")
 
     # Plots
-    sns.histplot(areaArr, binwidth=3, stat="count",
+    sns.histplot(diameter_arr, binwidth=3, stat="count",
                  color="lightgray", ax=ax_hist)
-    sns.kdeplot(areaArr, color="#7092BE", lw=2, ax=ax_kde)
-    sns.boxplot(x=areaArr, ax=ax_box)
+    sns.kdeplot(diameter_arr, color="#7092BE", lw=2, ax=ax_kde)
+    sns.boxplot(x=diameter_arr, ax=ax_box)
 
-    ax_originalImg.imshow(cv2.cvtColor(originalImg, cv2.COLOR_BGR2RGB))
-    ax_mask.imshow(cv2.cvtColor(measuredImg, cv2.COLOR_BGR2RGB))
-    ax_refinedContours.imshow(cv2.cvtColor(cleanImg, cv2.COLOR_BGR2RGB))
+    gray_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
+    ax_gray_img.imshow(gray_img)
+    ax_mask.imshow(gray_img, cmap='gray')
+    show_n = min(1000, len(pairs))
+    for i in range(0, show_n, 3):
+        (y1, x1), (y2, x2), dist = pairs[i]
+        # color = ax_mask.cm.jet(dist / 50.0) if dist < 50 else (1, 0, 0)
+        ax_mask.plot([x1, x2], [y1, y2], color='red', linewidth=1, alpha=0.6)
+
+    ax_refinedContours.imshow(cv2.cvtColor(edge_mask, cv2.COLOR_BGR2RGB))
 
     fig.subplots_adjust(
         left=0.05,

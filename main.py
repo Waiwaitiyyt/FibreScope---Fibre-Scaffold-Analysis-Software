@@ -8,9 +8,9 @@ from ui.about import AboutDialog
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 import core.io as io
-from core.fibreCore import fibreMeasure
+from core.fibreCore import fibre_measure
 from core.poreCore import poresMeasure
-from core.render import fibreResultVisualise, poreResultVisualise
+from core.render import fibre_result_visualise, poreResultVisualise
 import json
 import cv2
 from datetime import datetime
@@ -30,14 +30,6 @@ class MainWindow(QMainWindow):
             data = json.load(jsonFile)
         self.mode = data["mode"]
         
-        if self.mode == "f":
-            self.setWindowTitle("FibreScope - fibre mode")
-            try:
-                self.modelPath = data["fibreModel"]
-                self.model = fibreMeasure.FibreModel(self.modelPath)
-            except:
-                modelWarning = NoModelWarning(parent = self)
-                modelWarning.exec()
         if self.mode == "p":
             self.setWindowTitle("FibreScope - pore mode")
             try:
@@ -58,7 +50,7 @@ class MainWindow(QMainWindow):
         self.ui.actionChange_Pore_Model.triggered.connect(io.changePoreModel)
         self.ui.actionChange_Scale_Factor.triggered.connect(self._factorDialog)
         self.ui.actionChange_JER.triggered.connect(self._jerDialog)
-        self.ui.actionFibre_Measure.triggered.connect(self._toggleFibreMode)
+        # self.ui.actionFibre_Measure.triggered.connect(self._toggleFibreMode)
         self.ui.actionPore_Measure.triggered.connect(self._togglePoreMode)
         self.ui.actionRun_Analysis.triggered.connect(self._startAnalysis)
         self.ui.actionSave_Result.triggered.connect(self._saveResult)
@@ -104,16 +96,6 @@ class MainWindow(QMainWindow):
                 reject = RejectValue(parent = self)
                 reject.exec()
 
-    def _toggleFibreMode(self):
-        with open("data.json", "r") as jsonFile:
-            data = json.load(jsonFile)
-        data["mode"] = "f"
-        with open("data.json", "w") as jsonFile:
-            json.dump(data, jsonFile, indent = 2)
-        self.modelPath = data["fibreModel"]
-        self.model = fibreMeasure.FibreModel(self.modelPath)
-        self.setWindowTitle("FibreScope - fibre mode")
-
     def _togglePoreMode(self):
         with open("data.json", "r") as jsonFile:
             data = json.load(jsonFile)
@@ -154,7 +136,7 @@ class MainWindow(QMainWindow):
         self.fig.clear()
         if imgPath != "":
             if mode == "f": 
-                return fibreMeasure.measure(imgPath, self.model)
+                return fibre_measure.measure(imgPath)
             if mode == "p":
                 return poresMeasure.measure(imgPath, self.model)
         else:
@@ -169,12 +151,12 @@ class MainWindow(QMainWindow):
         with open("data.json", "r") as jsonFile:
             data = json.load(jsonFile)
         if data["mode"] == "f":
-            diameterList, measuredImg, cleanImg = result
-            fibreResultVisualise(
-                diameterList,
-                measuredImg,
-                cleanImg,
-                originalImg=cv2.imread(data["imgPath"]),
+            true_diameters, pairs, edge_mask = result
+            fibre_result_visualise(
+                true_diameters,
+                data["imgPath"],
+                pairs,
+                edge_mask,
                 fig=self.fig
             )
         else:
