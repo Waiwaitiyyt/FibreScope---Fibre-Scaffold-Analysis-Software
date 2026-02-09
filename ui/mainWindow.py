@@ -1,0 +1,231 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'main.ui'
+##
+## Created by: Qt User Interface Compiler version 6.10.1
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QFrame, QHeaderView,
+    QMainWindow, QMenu, QMenuBar, QSizePolicy,
+    QStatusBar, QTableWidget, QTableWidgetItem, QWidget)
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(1080, 640)
+        MainWindow.setMinimumSize(QSize(1080, 640))
+        MainWindow.setMaximumSize(QSize(1080, 680))
+        self.actionFile = QAction(MainWindow)
+        self.actionFile.setObjectName(u"actionFile")
+        self.actionOpen_Image = QAction(MainWindow)
+        self.actionOpen_Image.setObjectName(u"actionOpen_Image")
+        self.actionOpen_Image.setVisible(True)
+        self.actionOpen_Image.setIconVisibleInMenu(True)
+        self.actionOpen_Image.setShortcutVisibleInContextMenu(True)
+        self.actionSave_Result = QAction(MainWindow)
+        self.actionSave_Result.setObjectName(u"actionSave_Result")
+        self.actionExit = QAction(MainWindow)
+        self.actionExit.setObjectName(u"actionExit")
+        self.actionChange_Fibre_Model = QAction(MainWindow)
+        self.actionChange_Fibre_Model.setObjectName(u"actionChange_Fibre_Model")
+        self.actionChange_Pore_Model = QAction(MainWindow)
+        self.actionChange_Pore_Model.setObjectName(u"actionChange_Pore_Model")
+        self.actionPore_Measure = QAction(MainWindow)
+        self.actionPore_Measure.setObjectName(u"actionPore_Measure")
+        self.actionFibre_Measure = QAction(MainWindow)
+        self.actionFibre_Measure.setObjectName(u"actionFibre_Measure")
+        self.actionRun_Analysis = QAction(MainWindow)
+        self.actionRun_Analysis.setObjectName(u"actionRun_Analysis")
+        self.actionAbout = QAction(MainWindow)
+        self.actionAbout.setObjectName(u"actionAbout")
+        self.actionChange_Scale_Factor = QAction(MainWindow)
+        self.actionChange_Scale_Factor.setObjectName(u"actionChange_Scale_Factor")
+        self.actionChange_JER = QAction(MainWindow)
+        self.actionChange_JER.setObjectName(u"actionChange_JER")
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.centralwidget.setMinimumSize(QSize(1080, 620))
+        self.centralwidget.setMaximumSize(QSize(1080, 720))
+        self.resultFrame = QFrame(self.centralwidget)
+        self.resultFrame.setObjectName(u"resultFrame")
+        self.resultFrame.setGeometry(QRect(0, 0, 1080, 540))
+        self.resultFrame.setMinimumSize(QSize(1080, 540))
+        self.resultFrame.setMaximumSize(QSize(3840, 2160))
+        self.resultFrame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.resultFrame.setFrameShadow(QFrame.Shadow.Raised)
+        self.tableWidget = QTableWidget(self.centralwidget)
+        if (self.tableWidget.columnCount() < 9):
+            self.tableWidget.setColumnCount(9)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        font = QFont()
+        font.setItalic(False)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        __qtablewidgetitem1.setFont(font);
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(8, __qtablewidgetitem8)
+        if (self.tableWidget.rowCount() < 1):
+            self.tableWidget.setRowCount(1)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.tableWidget.setVerticalHeaderItem(0, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 0, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 1, __qtablewidgetitem11)
+        __qtablewidgetitem12 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 2, __qtablewidgetitem12)
+        __qtablewidgetitem13 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 3, __qtablewidgetitem13)
+        __qtablewidgetitem14 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 4, __qtablewidgetitem14)
+        __qtablewidgetitem15 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 5, __qtablewidgetitem15)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 6, __qtablewidgetitem16)
+        __qtablewidgetitem17 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 7, __qtablewidgetitem17)
+        __qtablewidgetitem18 = QTableWidgetItem()
+        self.tableWidget.setItem(0, 8, __qtablewidgetitem18)
+        self.tableWidget.setObjectName(u"tableWidget")
+        self.tableWidget.setGeometry(QRect(0, 540, 1080, 60))
+        self.tableWidget.setMinimumSize(QSize(1080, 60))
+        self.tableWidget.setMaximumSize(QSize(1080, 180))
+        self.tableWidget.setLayoutDirection(Qt.LayoutDirection.LeftToRight)
+        self.tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableWidget.setDragDropOverwriteMode(False)
+        self.tableWidget.setGridStyle(Qt.PenStyle.NoPen)
+        self.tableWidget.setWordWrap(True)
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 1080, 33))
+        self.menuFibre_Diameter_Measurement = QMenu(self.menubar)
+        self.menuFibre_Diameter_Measurement.setObjectName(u"menuFibre_Diameter_Measurement")
+        self.menuRun = QMenu(self.menubar)
+        self.menuRun.setObjectName(u"menuRun")
+        self.menuSettings = QMenu(self.menubar)
+        self.menuSettings.setObjectName(u"menuSettings")
+        self.menuAbout = QMenu(self.menubar)
+        self.menuAbout.setObjectName(u"menuAbout")
+        self.menuOptions = QMenu(self.menubar)
+        self.menuOptions.setObjectName(u"menuOptions")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.menubar.addAction(self.menuFibre_Diameter_Measurement.menuAction())
+        self.menubar.addAction(self.menuRun.menuAction())
+        self.menubar.addAction(self.menuOptions.menuAction())
+        self.menubar.addAction(self.menuSettings.menuAction())
+        self.menubar.addAction(self.menuAbout.menuAction())
+        self.menuFibre_Diameter_Measurement.addAction(self.actionOpen_Image)
+        self.menuFibre_Diameter_Measurement.addAction(self.actionSave_Result)
+        self.menuFibre_Diameter_Measurement.addAction(self.actionExit)
+        self.menuRun.addAction(self.actionRun_Analysis)
+        self.menuSettings.addAction(self.actionChange_Scale_Factor)
+        self.menuSettings.addAction(self.actionChange_JER)
+        self.menuAbout.addAction(self.actionAbout)
+        self.menuOptions.addAction(self.actionPore_Measure)
+        self.menuOptions.addAction(self.actionFibre_Measure)
+
+        self.retranslateUi(MainWindow)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        self.actionFile.setText(QCoreApplication.translate("MainWindow", u"File", None))
+        self.actionOpen_Image.setText(QCoreApplication.translate("MainWindow", u"Open Image", None))
+#if QT_CONFIG(shortcut)
+        self.actionOpen_Image.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+I", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionSave_Result.setText(QCoreApplication.translate("MainWindow", u"Save Result", None))
+#if QT_CONFIG(shortcut)
+        self.actionSave_Result.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+S", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+#if QT_CONFIG(shortcut)
+        self.actionExit.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+Q", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionChange_Fibre_Model.setText(QCoreApplication.translate("MainWindow", u"Change Fibre Model", None))
+#if QT_CONFIG(shortcut)
+        self.actionChange_Fibre_Model.setShortcut(QCoreApplication.translate("MainWindow", u"F3", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionChange_Pore_Model.setText(QCoreApplication.translate("MainWindow", u"Change Pore Model", None))
+#if QT_CONFIG(shortcut)
+        self.actionChange_Pore_Model.setShortcut(QCoreApplication.translate("MainWindow", u"F4", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionPore_Measure.setText(QCoreApplication.translate("MainWindow", u"Pore Measure", None))
+#if QT_CONFIG(shortcut)
+        self.actionPore_Measure.setShortcut(QCoreApplication.translate("MainWindow", u"F1", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionFibre_Measure.setText(QCoreApplication.translate("MainWindow", u"Fibre Measure", None))
+#if QT_CONFIG(shortcut)
+        self.actionFibre_Measure.setShortcut(QCoreApplication.translate("MainWindow", u"F2", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionRun_Analysis.setText(QCoreApplication.translate("MainWindow", u"Run", None))
+#if QT_CONFIG(shortcut)
+        self.actionRun_Analysis.setShortcut(QCoreApplication.translate("MainWindow", u"F5", None))
+#endif // QT_CONFIG(shortcut)
+        self.actionAbout.setText(QCoreApplication.translate("MainWindow", u"About", None))
+        self.actionChange_Scale_Factor.setText(QCoreApplication.translate("MainWindow", u"Change Scale Factor", None))
+        self.actionChange_JER.setText(QCoreApplication.translate("MainWindow", u"Change JER", None))
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Average", None));
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Standard Deviation", None));
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Variance", None));
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"SEM", None));
+        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"Median", None));
+        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Q1, Q3", None));
+        ___qtablewidgetitem6 = self.tableWidget.horizontalHeaderItem(6)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"IQR", None));
+        ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(7)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"95% CI", None));
+        ___qtablewidgetitem8 = self.tableWidget.horizontalHeaderItem(8)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"JER", None));
+        ___qtablewidgetitem9 = self.tableWidget.verticalHeaderItem(0)
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+
+        __sortingEnabled = self.tableWidget.isSortingEnabled()
+        self.tableWidget.setSortingEnabled(False)
+        self.tableWidget.setSortingEnabled(__sortingEnabled)
+
+        self.menuFibre_Diameter_Measurement.setTitle(QCoreApplication.translate("MainWindow", u"Files", None))
+        self.menuRun.setTitle(QCoreApplication.translate("MainWindow", u"Run", None))
+        self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.menuAbout.setTitle(QCoreApplication.translate("MainWindow", u"About", None))
+        self.menuOptions.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
+    # retranslateUi
+
