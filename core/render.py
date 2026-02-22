@@ -36,7 +36,7 @@ def fibre_result_visualise(diameter_arr: np.ndarray, img_path: str, pairs: list,
     sns.boxplot(x=diameter_arr, ax=ax_box)
 
     gray_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
-    ax_gray_img.imshow(gray_img)
+    ax_gray_img.imshow(gray_img, cmap = "gray")
     ax_mask.imshow(gray_img, cmap='gray')
     show_n = min(1000, len(pairs))
     for i in range(0, show_n, 3):

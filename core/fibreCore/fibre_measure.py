@@ -10,10 +10,10 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import sem, gaussian_kde
-from skimage.morphology import skeletonize, medial_axis
+from skimage.morphology import skeletonize, medial_axis, remove_small_objects
 from skimage import img_as_float # type: ignore
 from skimage.feature import hessian_matrix, hessian_matrix_eigvals
-from scipy.ndimage import gaussian_filter, sobel, distance_transform_edt
+from scipy.ndimage import distance_transform_edt
 import warnings
 import json
 from typing import Tuple
@@ -88,7 +88,7 @@ def edge_width(ridge_mask: np.ndarray) -> float:
     diameters = distance_map * 2
     refined_centerline = exclude_junction(centerline, 20)
     diameter_values = diameters[refined_centerline]
-    return np.mean(diameter_values)
+    return np.mean(diameter_values) - 2 # 2 here, is minused due to the hessian matrix selection which includes 2 extra px at the boundary
 
 def bresenham_line(y0, x0, y1, x1) -> list:
     '''
@@ -127,11 +127,71 @@ def bresenham_line(y0, x0, y1, x1) -> list:
     
     return points
 
+def local_pca_normal(skeleton: np.ndarray, y: int, x: int, window_size: int = 15) -> Tuple[float, float]:
+    """
+    Calculate the local unit normal vector by applying local PCA approximation
+    
+    Workflow:
+    1. Extract all points around the sampling point inside a window area
+    2. Execute PCA and obtain tangent vector
+    3. Obtain normal vector via tangent vector
+    
+    
+    :param skeleton: np.ndarray
+    :param y: int
+    :param x: int
+    :param window_size: int
+    
+    :return: 
+    :rtype: float, float
+    """
+    h, w = skeleton.shape
+    
+    y_min = max(0, y - window_size)
+    y_max = min(h, y + window_size + 1)
+    x_min = max(0, x - window_size)
+    x_max = min(w, x + window_size + 1)
+    
+    window = skeleton[y_min:y_max, x_min:x_max]
+    local_coords = np.argwhere(window)
+    
+    if len(local_coords) < 3:
+        return 0.0, 0.0
+    
+    local_coords[:, 0] += y_min
+    local_coords[:, 1] += x_min
+
+    distances = np.sqrt((local_coords[:, 0] - y)**2 + (local_coords[:, 1] - x)**2)
+    mask = distances <= window_size
+    local_coords = local_coords[mask]
+    
+    if len(local_coords) < 3:
+        return 0.0, 0.0
+    
+
+    mean_y = local_coords[:, 0].mean()
+    mean_x = local_coords[:, 1].mean()
+    centered = local_coords - np.array([mean_y, mean_x])
+    cov_matrix = np.cov(centered.T)
+    eigenvalues, eigenvectors = np.linalg.eigh(cov_matrix)
+    tangent = eigenvectors[:, -1]  # [dy, dx]
+
+    normal = np.array([-tangent[1], tangent[0]])
+    norm = np.linalg.norm(normal)
+    if norm > 1e-8:
+        normal = normal / norm
+    else:
+        return 0.0, 0.0
+    
+    return float(normal[0]), float(normal[1])  # (ny, nx)
+
+
 
 def measure_edge_pair_distances_final(edge_mask: np.ndarray, 
                                        sample_rate: float = 0.2,
                                        max_search_distance: int = 50,
                                        min_distance_hard: int = 5,
+                                       jer: int = 40,
                                        smooth_sigma: float = 1.0) -> Tuple[list, np.ndarray]:
     '''
     A comprehensive solution for measuring distance between curve pairs.
@@ -155,6 +215,9 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
     :param min_distance_hard: Minimum distance for starting sampling in order to avoid error 
     :type min_distance_hard: int
 
+    :param jer: Junction exclusion radius
+    :type jer: int
+
     :param smooth_sigma: Smoothing factor
     :type smooth_sigma: float
     
@@ -165,20 +228,14 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
     '''
 
     # Skeleton Extraction and refining
-    skeleton = skeletonize(edge_mask)
-    skeleton = exclude_junction(skeleton, 50)
+    raw_skeleton = skeletonize(edge_mask)
+    skeleton = exclude_junction(raw_skeleton, jer)
+    skeleton = remove_small_objects(skeleton, min_size = 10, connectivity = 2)
     edge_coords = np.argwhere(skeleton)
     
     if len(edge_coords) == 0:
         return [], np.array([])
     
-    # Calculation and nomalisation of normal vector
-    edge_smooth = gaussian_filter(skeleton.astype(float), sigma=smooth_sigma)
-    grad_y = sobel(edge_smooth, axis=0)
-    grad_x = sobel(edge_smooth, axis=1)
-    grad_mag = np.sqrt(grad_x**2 + grad_y**2) + 1e-8
-    normal_y = grad_y / grad_mag
-    normal_x = grad_x / grad_mag
     
     # Sampling
     n_total = len(edge_coords)
@@ -197,13 +254,15 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
                         return True
         return False
     
+
     # Points iteration sampling
     edge_pairs = []
     distances = []
     h, w = skeleton.shape
     for idx in sample_indices:
         y0, x0 = edge_coords[idx]
-        ny, nx = normal_y[y0, x0], normal_x[y0, x0]
+        ny, nx = local_pca_normal(skeleton, y0, x0)
+        # ny, nx = normal_y[y0, x0], normal_x[y0, x0]
         if abs(ny) < 0.1 and abs(nx) < 0.1:
             continue
         candidates = []
@@ -226,16 +285,28 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
                     break
         
         # Result filtration
+        # Reject when have two results
         if len(candidates) == 0:
             continue
         elif len(candidates) == 1:
             paired_coord, dist = candidates[0]
         else:
-            paired_coord, dist = min(candidates, key=lambda c: c[1])
+            continue
         
         edge_pairs.append(((y0, x0), paired_coord, dist))
         distances.append(dist)
+    average_ridge_width = edge_width(edge_mask)
     distances = np.array(distances)
+    distances += average_ridge_width
+
+    # plt.figure()
+    # plt.imshow(skeleton, cmap='gray') # type: ignore
+    # show_n = min(1000, len(edge_pairs))
+    # for i in range(0, show_n, 3):
+    #     (y1, x1), (y2, x2), dist = edge_pairs[i]
+    #     color = plt.cm.jet(dist / 50.0) if dist < 50 else (1, 0, 0) # type: ignore
+    #     plt.plot([x1, x2], [y1, y2], color=color, linewidth=1, alpha=0.6)
+    # plt.show()
     return edge_pairs, distances
 
 def result_analyse(diameter_arr: np.ndarray) -> None:
@@ -277,7 +348,7 @@ def result_analyse(diameter_arr: np.ndarray) -> None:
     with open("data.json", "w") as jsonFile:
         json.dump(data, jsonFile, indent = 2)
 
-def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, smooth_sigma:float = 1.0) -> Tuple[np.ndarray, list, np.ndarray]:
+def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, jer: int = 40, smooth_sigma:float = 1.0) -> Tuple[np.ndarray, list, np.ndarray]:
     '''
 +   Perform measurement for fibres
     
@@ -296,6 +367,9 @@ def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 
     :param min_distance_hard: Minimum distance for starting sampling in order to avoid error 
     :type min_distance_hard: int
 
+    :param jer: Junction exclusion radius
+    :type jer: int
+
     :param smooth_sigma: Smoothing factor
     :type smooth_sigma: float
 
@@ -303,20 +377,15 @@ def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 
     :rtype: Tuple[ndarray[Any, Any], list[Any], ndarray[Any, Any]]
     '''
     edge_mask = ridge_enhancement(img_path)
-    average_ridge_width = edge_width(edge_mask)
-    pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, smooth_sigma)
-    true_diameters = distances + average_ridge_width
-    result_analyse(true_diameters)
-    return true_diameters, pairs, edge_mask
+    pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, jer, smooth_sigma)
+    result_analyse(distances)
+    return distances, pairs, edge_mask
 
 
 if __name__ == "__main__":
-    from PIL import Image
-    import numpy as np
-
-    img_path = r"E:\CoraMetix\Fibre Diameter Measurement\scaffoldAnalysis_Dev\images\06.16.04_10x_centre.jpg"
-    true_diameters, pairs, edge_mask= measure(img_path)
-    print(np.mean(true_diameters))
+    img_path = r"E:/CoraMetix/Fibre Diameter Measurement/scaffoldAnalysis-Dev/images/06.13.06_10x_centre.jpg"
+    distances, pairs, edge_mask= measure(img_path, jer = 50)
+    print(np.mean(distances))
 
     gray_img = cv2.imread(img_path, cv2.IMREAD_GRAYSCALE)
 

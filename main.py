@@ -133,7 +133,8 @@ class MainWindow(QMainWindow):
         self.fig.clear()
         if imgPath != "":
             if mode == "f": 
-                return fibre_measure.measure(imgPath)
+                jer = data["JER"]
+                return fibre_measure.measure(imgPath, jer)
             if mode == "p":
                 return pore_measure.measure(imgPath)
         else:
@@ -178,7 +179,7 @@ class MainWindow(QMainWindow):
 
         average = QTableWidgetItem(str(round(data[modeSetting]["Average"], 4)))
         stdev = QTableWidgetItem(str(round(data[modeSetting]["Standard Deviation"], 4)))
-        var = QTableWidgetItem(str(round(data[modeSetting]["KDE Peak"], 4)))
+        kde_peak = QTableWidgetItem(str(round(data[modeSetting]["KDE Peak"], 4)))
         sem = QTableWidgetItem(str(round(data[modeSetting]["SEM"], 4)))
         median = QTableWidgetItem(str(round(data[modeSetting]["median"], 4)))
         q1, q3 = round(data[modeSetting]["Q1, Q3"][0], 4), round(data[modeSetting]["Q1, Q3"][1], 4)
@@ -189,19 +190,19 @@ class MainWindow(QMainWindow):
         jerAndFactor = round(data["JER"]), data["scaleFactor"]
         kernel = QTableWidgetItem(f"{jerAndFactor}")
 
-        average.setTextAlignment(Qt.AlignCenter)
-        stdev.setTextAlignment(Qt.AlignCenter)
-        var.setTextAlignment(Qt.AlignCenter)
-        sem.setTextAlignment(Qt.AlignCenter)
-        median.setTextAlignment(Qt.AlignCenter)
-        q1q3.setTextAlignment(Qt.AlignCenter)
-        iqr.setTextAlignment(Qt.AlignCenter)
-        ci95.setTextAlignment(Qt.AlignCenter)
-        kernel.setTextAlignment(Qt.AlignCenter)
+        average.setTextAlignment(Qt.AlignCenter)    # type: ignore
+        stdev.setTextAlignment(Qt.AlignCenter)  # type: ignore
+        kde_peak.setTextAlignment(Qt.AlignCenter)   # type: ignore
+        sem.setTextAlignment(Qt.AlignCenter)    # type: ignore
+        median.setTextAlignment(Qt.AlignCenter) # type: ignore
+        q1q3.setTextAlignment(Qt.AlignCenter)   # type: ignore
+        iqr.setTextAlignment(Qt.AlignCenter)    # type: ignore
+        ci95.setTextAlignment(Qt.AlignCenter)   # type: ignore
+        kernel.setTextAlignment(Qt.AlignCenter) # type: ignore
 
         self.ui.tableWidget.setItem(0, 0, average)
         self.ui.tableWidget.setItem(0, 1, stdev)
-        self.ui.tableWidget.setItem(0, 2, var)
+        self.ui.tableWidget.setItem(0, 2, kde_peak)
         self.ui.tableWidget.setItem(0, 3, sem)
         self.ui.tableWidget.setItem(0, 4, median)
         self.ui.tableWidget.setItem(0, 5, q1q3)
