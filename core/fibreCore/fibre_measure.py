@@ -348,9 +348,9 @@ def result_analyse(diameter_arr: np.ndarray) -> None:
     with open("data.json", "w") as jsonFile:
         json.dump(data, jsonFile, indent = 2)
 
-def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, jer: int = 40, smooth_sigma:float = 1.0) -> Tuple[np.ndarray, list, np.ndarray]:
+def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, jer: int = 40, smooth_sigma:float = 1.0, scale_factor: float = 1.25) -> Tuple[np.ndarray, list, np.ndarray]:
     '''
-+   Perform measurement for fibres
+    Perform measurement for fibres
     
     :param img_path:
     :type img_path: str
@@ -373,11 +373,15 @@ def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 
     :param smooth_sigma: Smoothing factor
     :type smooth_sigma: float
 
+    :param scale_factor: Scale factor
+    :type scale_factor: float
+
     :return: True diameter array, point pairs and ridge mask
     :rtype: Tuple[ndarray[Any, Any], list[Any], ndarray[Any, Any]]
     '''
     edge_mask = ridge_enhancement(img_path)
     pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, jer, smooth_sigma)
+    distances *= scale_factor
     result_analyse(distances)
     return distances, pairs, edge_mask
 

@@ -78,7 +78,7 @@ class MainWindow(QMainWindow):
                 accept.exec()
                 with open("data.json", "r") as jsonFile:
                     data = json.load(jsonFile)
-                data["scaleFactor"] = newFactor
+                data["JER"] = newFactor
                 with open("data.json", "w") as jsonFile:
                     json.dump(data, jsonFile, indent = 2)
 
@@ -133,8 +133,9 @@ class MainWindow(QMainWindow):
         self.fig.clear()
         if imgPath != "":
             if mode == "f": 
-                jer = data["JER"]
-                return fibre_measure.measure(imgPath, jer)
+                jer_value = data["JER"]
+                scale = data["scaleFactor"]
+                return fibre_measure.measure(imgPath, jer = jer_value, scale_factor = scale)
             if mode == "p":
                 return pore_measure.measure(imgPath)
         else:
