@@ -1,0 +1,27 @@
+# C++
+build/
+*.pyd
+*.so
+*.dylib
+*.dll
+*.o
+*.obj
+*.exe
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.vs/
+
+# Graphic Design
+design/
+
+!lib/.gitkeep
