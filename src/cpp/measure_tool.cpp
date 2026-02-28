@@ -27,6 +27,8 @@ std::vector<std::pair<int, int>> bresenham_line(int y0, int x0, int y1, int x1) 
     return points;
 }
 
+
+
 PYBIND11_MODULE(measure_tool, m) {
     m.doc() = "Measurement tools for fibre diameter measurement, including computation-intensive functions built in cpp";
     m.def("bresenham_line", &bresenham_line, "Return point coordinates set using Bresenham's algorithm");
