@@ -1,5 +1,0 @@
-{
-  "Interpreter": "CondaEnv|CondaEnv|scaffoldAnalysis",
-  "SuppressEnvironmentCreationPrompt": true,
-  "SuppressConfigureTestFrameworkPrompt": "true"
-}
