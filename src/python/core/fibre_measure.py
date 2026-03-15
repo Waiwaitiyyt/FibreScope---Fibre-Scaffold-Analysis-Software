@@ -20,12 +20,16 @@ import json
 from typing import Tuple
 warnings.filterwarnings('ignore')
 
-def ridge_enhancement(img_path: str) -> np.ndarray:
+def ridge_enhancement(img_path: str, sigma: int = 2, threshold: float = 0.15) -> np.ndarray:
     '''
     Enhance and extract ridge featues from assigned image path and return the binary mask of ridge
 
     :param img_path: 
     :type img_path: str
+    :param sigma: 
+    :type sigma: int
+    :param threshold: 
+    :type threshold: float
     :return: 
     :rtype: ndarray[Any, Any]
     '''
@@ -35,11 +39,11 @@ def ridge_enhancement(img_path: str) -> np.ndarray:
     img = clahe.apply(img) # type: ignore
     img_float = img_as_float(img)
     # Enhance ridge features 
-    H_elems = hessian_matrix(img_float, sigma=3, order='rc', use_gaussian_derivatives=False)
+    H_elems = hessian_matrix(img_float, sigma=sigma, order='rc', use_gaussian_derivatives=False)
     eigvals = hessian_matrix_eigvals(H_elems)
     ridge_response = np.abs(eigvals[0])
     norm = (ridge_response - ridge_response.min()) / (np.ptp(ridge_response) + 1e-6)
-    mask = (norm > 0.15).astype(np.uint8) * 255
+    mask = (norm > threshold).astype(np.uint8) * 255
     return mask
 
 def exclude_junction(skeleton_mask: np.ndarray, jer: float) -> np.ndarray:
@@ -192,8 +196,7 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
                                        sample_rate: float = 0.2,
                                        max_search_distance: int = 50,
                                        min_distance_hard: int = 5,
-                                       jer: int = 40,
-                                       smooth_sigma: float = 1.0) -> Tuple[list, np.ndarray]:
+                                       jer: int = 40) -> Tuple[list, np.ndarray]:
     '''
     A comprehensive solution for measuring distance between curve pairs.
     The algorithm pipeline:
@@ -243,16 +246,13 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
     n_sample = int(n_total * sample_rate)
     sample_indices = np.random.choice(n_total, min(n_sample, n_total), replace=False)
     
-    def has_edge_in_8neighbors(y, x):
+    def has_edge_in_4neighbors(y, x):
         h, w = skeleton.shape
-        for dy in [-1, 0, 1]:
-            for dx in [-1, 0, 1]:
-                if dy == 0 and dx == 0:
-                    continue
-                ny, nx = y + dy, x + dx
-                if 0 <= ny < h and 0 <= nx < w:
-                    if skeleton[ny, nx]:
-                        return True
+        for dy, dx in [(-1, 0), (1, 0), (0, 0), (0, -1), (0, 1)]:
+            ny, nx = y + dy, x + dx
+            if 0 <= ny < h and 0 <= nx < w:
+                if skeleton[ny, nx]:
+                    return True
         return False
     
 
@@ -280,7 +280,7 @@ def measure_edge_pair_distances_final(edge_mask: np.ndarray,
                     continue
                 if i >= max_search_distance:
                     break
-                if has_edge_in_8neighbors(py, px):
+                if has_edge_in_4neighbors(py, px):
                     dist = np.sqrt((py - y0)**2 + (px - x0)**2)
                     if dist > min_distance_hard * np.sqrt(2):
                         candidates.append(((py, px), dist))
@@ -350,7 +350,7 @@ def result_analyse(diameter_arr: np.ndarray) -> None:
     with open("data.json", "w") as jsonFile:
         json.dump(data, jsonFile, indent = 2)
 
-def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, jer: int = 40, smooth_sigma:float = 1.0, scale_factor: float = 1.25) -> Tuple[np.ndarray, list, np.ndarray]:
+def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 50, min_distance_hard: int= 5, jer: int = 40, scale_factor: float = 1.25) -> Tuple[np.ndarray, list, np.ndarray]:
     '''
     Perform measurement for fibres
     
@@ -382,14 +382,14 @@ def measure(img_path: str, sample_rate: float = 0.2, max_search_distance: int = 
     :rtype: Tuple[ndarray[Any, Any], list[Any], ndarray[Any, Any]]
     '''
     edge_mask = ridge_enhancement(img_path)
-    pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, jer, smooth_sigma)
+    pairs, distances = measure_edge_pair_distances_final(edge_mask, sample_rate, max_search_distance, min_distance_hard, jer)
     distances *= scale_factor
     result_analyse(distances)
     return distances, pairs, edge_mask
 
 
 if __name__ == "__main__":
-    img_path = r"E:/CoraMetix/Fibre Diameter Measurement/scaffoldAnalysis-Dev/images/06.13.06_10x_centre.jpg"
+    img_path = r"C:\Users\EnDes\Desktop\Untitled.png"
     distances, pairs, edge_mask= measure(img_path, jer = 50)
     print(np.mean(distances))
 
