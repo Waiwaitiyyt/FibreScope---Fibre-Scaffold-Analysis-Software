@@ -6,11 +6,14 @@ Scaffold analysis software designed for fibre diameter and pore size measurement
 
 ## Installation
 
-**Requirements:** Python 3.11+
+**Requirements:** Python 3.11+ and [uv](https://docs.astral.sh/uv/).
 
 ```bash
-pip install -r requirements.txt
+uv sync
 ```
+
+This installs the runtime dependencies into a local `.venv`. Add `--group dev` to
+also install the test/tooling dependencies (pytest, nox, ...).
 
 ### Build the C++ extension
 
@@ -28,7 +31,7 @@ The compiled `.so` / `.pyd` is placed in `lib/` and picked up automatically at r
 ### Run
 
 ```bash
-python run.py
+uv run python run.py
 ```
 
 ## Example

@@ -5,6 +5,27 @@ build-backend = "scikit_build_core.build"
 [project]
 name = "measure_tool"
 version = "1.0.0"
+requires-python = ">=3.11"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "numpy>=2.4.3",
+    "pyside6>=6.10.1",
+    "pyside6-addons>=6.10.1",
+    "pyside6-essentials>=6.10.1",
+    "scikit-image",
+    "scipy>=1.17.1",
+    "seaborn>=0.13.2",
+]
+
+[dependency-groups]
+dev = [
+    "ghapi>=1.0.13",
+    "nox>=2026.2.9",
+    "pytest>=9.0.2",
+    "rich>=14.3.3",
+    "setuptools>=80.9.0",
+    "tomlkit>=0.14.0",
+]
 
 [tool.scikit-build]
 cmake.build-type = "Release"
